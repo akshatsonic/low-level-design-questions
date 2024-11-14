@@ -1,3 +1,4 @@
+import vehicles.Vehicle;
 import vehicles.VehicleType;
 
 import java.util.ArrayList;
@@ -38,5 +39,24 @@ public class Level {
                 .filter(ParkingSpot::isAvailable)
                 .filter(parkingSpot -> parkingSpot.getVehicleType().equals(vehicleType))
                 .count();
+    }
+
+    public synchronized boolean parkVehicle(Vehicle vehicle){
+        for(ParkingSpot parkingSpot: parkingSpots){
+            if(!parkingSpot.isAvailable() && parkingSpot.getVehicleType().equals(vehicle.getVehicleType())){
+                parkingSpot.parkVehicle(vehicle);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public synchronized boolean unparkVehicle(Vehicle vehicle){
+        for(ParkingSpot parkingSpot: parkingSpots){
+            if(!parkingSpot.isAvailable() && parkingSpot.getParkedVehicle().equals(vehicle)){
+                return true;
+            }
+        }
+        return false;
     }
 }
