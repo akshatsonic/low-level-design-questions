@@ -1,0 +1,18 @@
+class Message{
+    messageId
+    messageStr
+}
+
+class Topic{
+    List<Message>
+    Set<Subscriber>
+}
+
+abstract Publisher{
+    topic
+    publish()
+}
+
+abstract Subscriber{
+    onMessage()
+}
