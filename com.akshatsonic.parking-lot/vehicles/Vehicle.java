@@ -16,4 +16,8 @@ public class Vehicle {
     public VehicleType getVehicleType(){
         return vehicleType;
     }
+
+    public boolean equals(Vehicle vehicle){
+        return vehicle.getVehicleNumber() == this.vehicleNumber && vehicle.getVehicleType().equals(this.vehicleType);
+    }
 }

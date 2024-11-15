@@ -9,6 +9,10 @@ public class Level {
     private final int floor;
     private final List<ParkingSpot> parkingSpots;
 
+    public int getFloor(){
+        return this.floor;
+    }
+
     public Level(int floor, int numSpots){
         this.floor=floor;
         parkingSpots = new ArrayList<>(numSpots);
@@ -22,7 +26,7 @@ public class Level {
         for(int i=1;i<=numBikes;i++){
             parkingSpots.add(new ParkingSpot(i, VehicleType.BIKE));
         }
-        for(int i=numBikes+1;i<=numCars;i++){
+        for(int i=numBikes+1;i<=numBikes+numCars;i++){
             parkingSpots.add(new ParkingSpot(i, VehicleType.CAR));
         }
         for(int i=numBikes+numCars+1;i<=numSpots;i++){
@@ -43,7 +47,7 @@ public class Level {
 
     public synchronized boolean parkVehicle(Vehicle vehicle){
         for(ParkingSpot parkingSpot: parkingSpots){
-            if(!parkingSpot.isAvailable() && parkingSpot.getVehicleType().equals(vehicle.getVehicleType())){
+            if(parkingSpot.isAvailable() && parkingSpot.getVehicleType().equals(vehicle.getVehicleType())){
                 parkingSpot.parkVehicle(vehicle);
                 return true;
             }
@@ -53,7 +57,9 @@ public class Level {
 
     public synchronized boolean unparkVehicle(Vehicle vehicle){
         for(ParkingSpot parkingSpot: parkingSpots){
+            System.out.println("Floor: "+floor + ", parking spot: "+ parkingSpot.getVehicleType() + ", parking is available: "+ parkingSpot.isAvailable() + ", parking vehicle number: "+ parkingSpot.getParkedVehicleNumber());
             if(!parkingSpot.isAvailable() && parkingSpot.getParkedVehicle().equals(vehicle)){
+                parkingSpot.unparkVehicle();
                 return true;
             }
         }
