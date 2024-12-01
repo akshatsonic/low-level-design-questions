@@ -1,0 +1,40 @@
+User:
+    userId: int
+    credentials: Credentials
+
+S3Entity:
+    owner: int //userID
+    name: String,
+    List<Permission> permissions
+
+Permission:
+    userId: int
+    permissions: Set<PermissionType>
+
+PermissionService:
+    grantPermission(s3EntityName, userId, List<permissionType>)
+    revokePermission(s3EntityName, userId, List<permissionType>)
+
+PermissionType: -> enum
+    CREATE_BUCKET,
+    LIST_BUCKET,
+    DELETE_BUCKET,
+    UPLOAD_OBJECT,
+    DOWNLOAD_OBJECT,
+    LIST_OBJECT,
+    DELETE_OBJECT
+
+
+S3Bucket extends S3Entity:
+    objects: List<S3Object>
+
+S3Object extends S3Entity:
+    data: byte[]
+    getData(): byte[]
+
+VersionObjectDecorator:
+    s3Object: S3Object
+    currVersion: Int=0;
+    map<versionId, data []> versionMap
+    getData() -> versionMap.get(currVersion)
+    getVersionData(versionId) -> versionMap.get(versionId)

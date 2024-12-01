@@ -1,0 +1,19 @@
+Multiple log levels:
+    INFO, DEBUG, ERROR, WARN
+
+ConfigProperty file for setting log level
+    ERROR > WARN > INFO > DEBUG
+
+LoggingStrategy :
+    Based on logging framework will log message
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+interface ILogMessageHandler{
+    - logLevel
+    - logMessageHandler
+    - setNextMessageHandler()
+    - logMessage(message)
+
+}
