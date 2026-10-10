@@ -29,6 +29,12 @@ public class Solid {
         System.out.println("\n=== 4. ISP ===");  Isp.demo();
         System.out.println("\n=== 5. DIP ===");  Dip.demo();
         System.out.println("\nNow fill in the YOUR TURN sections and the MY EXAMPLE comments.");
+
+        System.out.println("=== 1. SRP ==="); Srp.myDemo();
+        System.out.println("\n=== 2. OCP ==="); Ocp.myDemo();
+        System.out.println("\n=== 3. LSP ==="); Lsp.myDemo();
+        System.out.println("\n=== 4. ISP ==="); Isp.myDemo();
+        System.out.println("\n=== 5. DIP ==="); Dip.myDemo();
     }
 
     // =====================================================================================
@@ -76,14 +82,41 @@ public class Solid {
         }
 
         // >>> WRITE YOUR FIX BELOW <<<
-        // (the four jobs are: ________ , ________ , ________ , ________ )
-
+        // (the four jobs are: validation , hashing , db operations , sending communication )
+        static class UserValidator{
+            void validate(String email, String password){
+                if (email == null || !email.contains("@")) throw new IllegalArgumentException("bad email");
+            }
+        }
+        static class PasswordHashing{
+            String hash(String password){
+                return new StringBuilder(password).reverse().toString(); // pretend hashing
+            }
+        }
+        static class UserRepository{
+            void saveToDb(String email, String hash){
+                System.out.println("INSERT user " + email + " hash=" + hash);       // pretend DB
+            }
+        }
+        static class UserCommunicationService{
+            void sendEmail(String email){
+                System.out.println("Sending welcome email to " + email);            // pretend email
+            }
+        }
 
 
 
         // MY EXAMPLE (a real class in my codebase with more than one reason to change):
         //
-
+        static void myDemo(){
+            UserValidator validator=new UserValidator();
+            PasswordHashing passwordHashing=new PasswordHashing();;
+            UserRepository userRepository= new UserRepository();
+            UserCommunicationService communicationService= new UserCommunicationService();
+            validator.validate("test@g.com", "password");
+            userRepository.saveToDb("test@g.com", passwordHashing.hash("password"));
+            communicationService.sendEmail("test@g.com");
+        }
 
         static void demo() {
             BadInvoice bad = new BadInvoice(); bad.add(10); bad.add(5.5); bad.print();
@@ -141,13 +174,40 @@ public class Solid {
         }
 
         // >>> WRITE YOUR FIX BELOW <<<
-
+        static class Customer{
+            protected double multiplier;
+            public double apply(double amount){
+                return amount*multiplier;
+            }
+        }
+        static class Regular extends Customer {
+            public Regular(){
+             this.multiplier=1;
+            }
+        }
+        static class Premium extends Customer{
+            public Premium(){
+             this.multiplier=0.90;
+            }
+        }
+        static class Vip extends Customer{
+            public Vip(){
+             this.multiplier=0.80;
+            }
+        }
+        static class Student extends Customer{
+            public Student(){
+             this.multiplier=0.15;
+            }
+        }
 
 
 
         // MY EXAMPLE (a type-switch in my codebase that grows with every new case):
         //
-
+        static void myDemo(){
+            System.out.println("good VIP on 100: "+new Vip().apply(100));
+        }
 
         static void demo() {
             System.out.println("bad rect: " + new BadAreaCalculator().area("rect", 3, 4));
@@ -205,13 +265,27 @@ public class Solid {
         }
 
         // >>> WRITE YOUR FIX BELOW <<<
-
+        static class Bird{
+            void eat() { System.out.println("eating"); }
+        }
+        static class Penguin extends Bird{
+        }
+        static class Sparrow extends Bird{
+            void fly(){
+                System.out.println("flying"); 
+            }
+        }
 
 
 
         // MY EXAMPLE (a subclass in my codebase that throws / ignores / narrows what the parent promised):
         //
-
+        static void myDemo(){
+            System.out.print("Good penguin: ");
+            new Penguin().eat();
+            System.out.print("Good Sparrow: ");
+            new Sparrow().fly();
+        }
 
         static void demo() {
             System.out.println("Rectangle 5x4 area: " + resizeTo5x4(new BadRectangle()));   // 20
@@ -265,12 +339,26 @@ public class Solid {
         }
 
         // >>> WRITE YOUR FIX BELOW <<<
-
+        interface Printable{
+            default void print(String doc) { System.out.println("printing " + doc); }
+        }
+        interface Scannable{
+            default void scan(String doc) { System.out.println("scanning " + doc); }
+        }
+        interface Faxable{
+            default void fax(String doc) { System.out.println("faxxing " + doc); }
+        }
+        static class Printer implements Printable{
+        }
 
 
 
         // MY EXAMPLE (a fat interface in my codebase with methods some implementers can't honor):
         //
+        static void myDemo(){
+            System.out.print("Good printer: ");
+            new Printer().print("report.pdf");
+        }
 
 
         static void demo() {
@@ -326,13 +414,44 @@ public class Solid {
         }
 
         // >>> WRITE YOUR FIX BELOW <<<
-
+        interface NotificationSender{
+            public void send(String msg);
+        }
+        static class NotificationManager{
+            private NotificationSender sender;
+            public NotificationManager(NotificationSender sender){
+                this.sender=sender;
+            }
+            void notifyUser(String msg) { sender.send(msg); }
+        }
+        static class Email implements NotificationSender{
+            String to;
+            public Email(String to){
+                this.to=to;
+            }
+            @Override
+            public void send(String msg){ System.out.println("EMAIL to " + this.to + ": " + msg); }
+        }
+        static class Sms implements NotificationSender{
+            String phone;
+            public Sms(String phone){
+                this.phone=phone;
+            }
+            @Override
+            public void send(String msg){ System.out.println("SMS to " + this.phone + ": " + msg); }
+        }
 
 
 
         // MY EXAMPLE (a class in my codebase that calls `new` on a concrete dependency, or one that
         // takes an interface via constructor and why that helped testing):
         //
+        static void myDemo(){
+            System.out.print("sending good email: ");
+            new NotificationManager(new Email("test@g.com")).notifyUser("hello");
+            System.out.print("sending good sms: ");
+            new NotificationManager(new Sms("9876543210")).notifyUser("hello sms");
+        }
 
 
         static void demo() {
@@ -347,12 +466,12 @@ public class Solid {
     // =====================================================================================
     // SELF-CHECK (answer out loud, no notes; tick when you can)
     // =====================================================================================
-    // [ ] SRP: What are the "reasons to change" for the class I just split?
-    // [ ] OCP: Which line would I have had to edit to add STUDENT in the BAD version? In mine?
-    // [ ] LSP: Why does BadSquare break the caller even though it compiles?
-    // [ ] ISP: What did SimplePrinter stop being forced to do?
-    // [ ] DIP: How would I unit test NotificationManager without sending a real email?
-    // [ ] Which two principles overlapped in my solutions, and why?
+    // [v] SRP: What are the "reasons to change" for the class I just split?
+    // [v] OCP: Which line would I have had to edit to add STUDENT in the BAD version? In mine?
+    // [v] LSP: Why does BadSquare break the caller even though it compiles?
+    // [v] ISP: What did SimplePrinter stop being forced to do?
+    // [v] DIP: How would I unit test NotificationManager without sending a real email?
+    // [v] Which two principles overlapped in my solutions, and why?
     //
-    // SCORE: ___ / 6   (6 = mark "Done" in the sheet; 4-5 = "Revisit"; below 4 = redo tomorrow)
+    // SCORE: 6 / 6   (6 = mark "Done" in the sheet; 4-5 = "Revisit"; below 4 = redo tomorrow)
 }
