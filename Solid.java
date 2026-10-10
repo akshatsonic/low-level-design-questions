@@ -197,7 +197,7 @@ public class Solid {
         }
         static class Student extends Customer{
             public Student(){
-             this.multiplier=0.15;
+             this.multiplier=0.85;
             }
         }
 
@@ -207,6 +207,7 @@ public class Solid {
         //
         static void myDemo(){
             System.out.println("good VIP on 100: "+new Vip().apply(100));
+            System.out.println("good STUDENT on 100: "+new Student().apply(100));
         }
 
         static void demo() {
