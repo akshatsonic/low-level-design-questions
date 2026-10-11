@@ -341,15 +341,26 @@ public class Solid {
 
         // >>> WRITE YOUR FIX BELOW <<<
         interface Printable{
-            default void print(String doc) { System.out.println("printing " + doc); }
+            void print(String doc);
         }
         interface Scannable{
-            default void scan(String doc) { System.out.println("scanning " + doc); }
+            void scan(String doc);
         }
         interface Faxable{
-            default void fax(String doc) { System.out.println("faxxing " + doc); }
+            void fax(String doc);
         }
         static class Printer implements Printable{
+            public void print(String doc){
+                System.out.println("Printer printing: "+doc);
+            }
+        }
+        static class OfficeMachine implements Printable,Scannable{
+            public void print(String doc){
+                System.out.println("Office Machine printing: "+doc);
+            }
+            public void scan(String doc){
+                System.out.println("Office machine scanning: "+doc);
+            }
         }
 
 
@@ -359,6 +370,10 @@ public class Solid {
         static void myDemo(){
             System.out.print("Good printer: ");
             new Printer().print("report.pdf");
+            System.out.print("Good Office Machine");
+            OfficeMachine machine = new OfficeMachine();
+            machine.print("new.pdf");
+            machine.scan("scannable.pdf");
         }
 
 
